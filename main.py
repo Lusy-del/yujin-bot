@@ -12,12 +12,13 @@ async def analyze(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not prompt:
         await update.message.reply_text("Введи запит після команди. Наприклад: /analysis Що робити з Ретровіль?")
         return
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    await update.message.reply_text(response['choices'][0]['message']['content'])
-
+    response = openai.Completion.create(
+    engine="text-davinci-003",
+    prompt=prompt,
+    max_tokens=500,
+    temperature=0.7
+)
+await update.message.reply_text(response.choices[0].text.strip())
 app = ApplicationBuilder().token("8174450246:AAE7XXZTLXrD4B41d-OQSv4LOd_18Gk_520").build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("analysis", analyze))
