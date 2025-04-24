@@ -10,7 +10,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY
 
 app = FastAPI()
-bot = Bot(token=BOT_TOKEN)
+bot = Bot("8174450246:AAE7XXZTLXrD4B41d-OQSv4LOd_18Gk_520")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Привіт! Я бот-помічник YUJIN. Напиши /аналіз <текст>, і я допоможу.")
