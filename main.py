@@ -28,19 +28,3 @@ app = ApplicationBuilder().token(bot_token).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("аналіз", analyze))
 app.run_polling()
-
-
----
-
-Не забудь:
-
-У Render в Environment Variables додати:
-
-BOT_TOKEN — токен із BotFather
-
-OPENAI_API_KEY — ключ із OpenAI
-
-
-
-Готова допомогти далі — скажи, якщо хочеш ще додати команди або перевірити роботу.
-
