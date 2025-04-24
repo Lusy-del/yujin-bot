@@ -18,7 +18,7 @@ async def analyze(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(response['choices'][0]['message']['content'])
 
-app = ApplicationBuilder().token(8174450246:AAE7XXZTLXrD4B41d-OQSv4LOd_18Gk_520.build
+app = ApplicationBuilder().token("8174450246:AAE7XXZTLXrD4B41d-OQSv4LOd_18Gk_520").build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("analysis", analyze))
 app.run_polling()
