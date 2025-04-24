@@ -5,12 +5,12 @@ import openai
 openai.api_key = 'YOUR_OPENAI_API_KEY'
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Привіт! Я бот-помічник YUJIN. Напиши /аналіз_кейсі <текст>, і я допоможу.")
+    await update.message.reply_text("Привіт! Я бот-помічник YUJIN. Напиши /analysis <текст>, і я допоможу.")
 
 async def analyze(update: Update, context: ContextTypes.DEFAULT_TYPE):
     prompt = ' '.join(context.args)
     if not prompt:
-        await update.message.reply_text("Введи запит після команди. Наприклад: /аналіз_кейсі Що робити з Ретровіль?")
+        await update.message.reply_text("Введи запит після команди. Наприклад: /analysis Що робити з Ретровіль?")
         return
     response = openai.ChatCompletion.create(
         model="gpt-4",
@@ -20,5 +20,5 @@ async def analyze(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 app = ApplicationBuilder().token("YOUR_TELEGRAM_BOT_TOKEN").build()
 app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler("аналіз_кейсі", analyze))
+app.add_handler(CommandHandler("analysis", analyze))
 app.run_polling()
