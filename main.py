@@ -1,0 +1,24 @@
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+import openai
+
+openai.api_key = 'YOUR_OPENAI_API_KEY'
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Привіт! Я бот-помічник YUJIN. Напиши /аналіз_кейсі <текст>, і я допоможу.")
+
+async def analyze(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    prompt = ' '.join(context.args)
+    if not prompt:
+        await update.message.reply_text("Введи запит після команди. Наприклад: /аналіз_кейсі Що робити з Ретровіль?")
+        return
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    await update.message.reply_text(response['choices'][0]['message']['content'])
+
+app = ApplicationBuilder().token("YOUR_TELEGRAM_BOT_TOKEN").build()
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("аналіз_кейсі", analyze))
+app.run_polling()
