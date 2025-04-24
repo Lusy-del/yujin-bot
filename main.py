@@ -1,36 +1,37 @@
 import os
 import openai
+import asyncio
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-# РћС‚СЂРёРјСѓС”РјРѕ С‚РѕРєРµРЅ Р· СЃРµСЂРµРґРѕРІРёС‰Р°
-bot_token = "8174450246:AAE7XXZTLXrD4B41d-OQSv4LOd_18Gk_520"
+# Отримання токенів з середовища
+bot_token = os.environ.get("BOT_TOKEN")
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
-# РљРѕРјР°РЅРґР° /start
+# Команда /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("РџСЂРёРІС–С‚! РЇ Р±РѕС‚-РїРѕРјС–С‡РЅРёРє YUJIN. РќР°РїРёС€Рё /Р°РЅР°Р»С–Р· <С‚РµРєСЃС‚>, С– СЏ РґРѕРїРѕРјРѕР¶Сѓ.")
+    await update.message.reply_text("Hi! I am the YUJIN assistant bot. Use /analiz <your request>.")
 
-# РљРѕРјР°РЅРґР° /Р°РЅР°Р»С–Р·
-async def analyze(update: Update, context: ContextTypes.DEFAULT_TYPE):
+# Команда /analiz
+async def analiz(update: Update, context: ContextTypes.DEFAULT_TYPE):
     prompt = ' '.join(context.args)
     if not prompt:
-        await update.message.reply_text("Р’РІРµРґРё Р·Р°РїРёС‚ РїС–СЃР»СЏ РєРѕРјР°РЅРґРё. РќР°РїСЂРёРєР»Р°Рґ: /Р°РЅР°Р»С–Р· Р©Рѕ СЂРѕР±РёС‚Рё Р· Р РµС‚СЂРѕРІС–Р»СЊ?")
+        await update.message.reply_text("Please enter your request after the command. Example: /analiz What should I do with Retroville?")
         return
+
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[{"role": "user", "content": prompt}]
     )
+
     await update.message.reply_text(response.choices[0].message.content.strip())
 
-# Р†РЅС–С†С–Р°Р»С–Р·Р°С†С–СЏ Р±РѕС‚Р°
+# Ініціалізація бота
 app = ApplicationBuilder().token(bot_token).build()
 app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler("Р°РЅР°Р»С–Р·", analyze))
+app.add_handler(CommandHandler("analiz", analiz))
 
-# РђСЃРёРЅС…СЂРѕРЅРЅРёР№ Р·Р°РїСѓСЃРє
-import asyncio
-
+# Асинхронний запуск (працює на Render)
 if __name__ == '__main__':
     async def main():
         await app.initialize()
