@@ -5,7 +5,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 # Отримання токенів з середовища
-bot_token = os.environ.get("BOT_TOKEN")
+bot_token = "8174450246:AAE7XXZTLXrD4B41d-OQSv4LOd_18Gk_520"
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 # Команда /start
