@@ -1,27 +1,46 @@
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+import os
 import openai
+from fastapi import FastAPI, Request
+from telegram import Update, Bot
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, Dispatcher
+from telegram.ext import MessageHandler, filters
 
-openai.api_key = 'sk-abc123xyz456...'  # <-- встав сюди ключ з OpenAI
+TOKEN = os.getenv("BOT_TOKEN")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # напр. https://your-bot-name.onrender.com/webhook
 
+openai.api_key = OPENAI_API_KEY
+
+bot = Bot(token=TOKEN)
+app = FastAPI()
+application = ApplicationBuilder().token(TOKEN).build()
+
+# Команди
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Привіт! Я бот-помічник YUJIN. Напиши /analysis <текст>, і я допоможу.")
+    await update.message.reply_text("Привіт! Я бот YUJIN.")
 
 async def analyze(update: Update, context: ContextTypes.DEFAULT_TYPE):
     prompt = ' '.join(context.args)
     if not prompt:
-        await update.message.reply_text("Введи запит після команди. Наприклад: /analysis Що робити з KPI?")
+        await update.message.reply_text("Введи запит після команди. Напр: /аналіз Що робити з Ретровіль?")
         return
-
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=500,
-        temperature=0.7
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": prompt}]
     )
-    await update.message.reply_text(response.choices[0].text.strip())
+    await update.message.reply_text(response.choices[0].message.content)
 
-app = ApplicationBuilder().token("8174450246:AAE7XXZTLXrD4B41d-OQSv4LOd_18Gk_520").build()  # <-- встав токен з BotFather
-app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler("analysis", analyze))
-app.run_polling()
+application.add_handler(CommandHandler("start", start))
+application.add_handler(CommandHandler("аналіз", analyze))
+
+# FastAPI endpoint
+@app.post("/webhook")
+async def telegram_webhook(req: Request):
+    data = await req.json()
+    update = Update.de_json(data, bot)
+    await application.process_update(update)
+    return {"ok": True}
+
+@app.on_event("startup")
+async def startup():
+    await bot.set_webhook(f"{WEBHOOK_URL}/webhook")
