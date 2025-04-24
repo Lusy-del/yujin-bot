@@ -2,7 +2,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import openai
 
-openai.api_key = 'YOUR_OPENAI_API_KEY'  # <-- встав сюди ключ з OpenAI
+openai.api_key = 'sk-abc123xyz456...'  # <-- встав сюди ключ з OpenAI
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Привіт! Я бот-помічник YUJIN. Напиши /analysis <текст>, і я допоможу.")
