@@ -21,8 +21,7 @@ async def analyze(update: Update, context: ContextTypes.DEFAULT_TYPE):
         model="gpt-4",
         messages=[{"role": "user", "content": prompt}]
     )
-    await update.message.reply_text(response.choices[0].message.content.strip())
-
+    await update.message.reply_text(response["choices"][0]["message"]["content"].strip())
 # Ініціалізація бота
 app = ApplicationBuilder().token(bot_token).build()
 app.add_handler(CommandHandler("start", start))
